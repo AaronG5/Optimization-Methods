@@ -56,10 +56,15 @@ def line_search(x, S_i, a=0, b=1, tolerance=0.0001):
 
    return (a + b) / 2
 
-def gradient_descent(x):
+def make_simplex_point(x, offset_1, offset_2):
+   p = x.copy()
+   p[0] = x[0] + offset_1 if 0 <= x[0] + offset_1 <= 1 else x[0] - offset_1
+   p[1] = x[1] + offset_2 if 0 <= x[1] + offset_2 <= 1 else x[1] - offset_2
+   return p
+
+def gradient_descent(x, tolerance):
    x = np.array(x, dtype=float)
    step = 0.01
-   tolerance = 0.0001
    
    cycle_count = 0
    func_comp_count = 0
@@ -79,9 +84,8 @@ def gradient_descent(x):
 
    return x, neg_func(x[0], x[1]), cycle_count, func_comp_count, test_points
 
-def steepest_descent(x):
+def steepest_descent(x, tolerance):
    x = np.array(x, dtype=float)
-   tolerance = 0.0001
    
    cycle_count = 0
    func_comp_count = 0
@@ -105,9 +109,69 @@ def steepest_descent(x):
 
    return x, neg_func(x[0], x[1]), cycle_count, func_comp_count, test_points
 
+def nelder_mead(x, tolerance):
+   cycle_count = 0
+   func_comp_count = 0
+   test_points = []
 
-def nelder_mead(x):
-   return 1
+   n = 2 
+   c = 0.5
+   gamma = 2
+   beta = 0.5
+   nu = -0.5
+
+   b = c / (n * np.sqrt(2)) * (np.sqrt(n+1) - 1)
+   a = b + c / np.sqrt(2)
+   
+   points = [
+      np.array([x[0], x[1]], dtype=float),
+      make_simplex_point(np.array(x, dtype=float), a, b),
+      make_simplex_point(np.array(x, dtype=float), b, a)
+   ]
+
+   points.sort(key=lambda p: neg_func(p[0],p[1]))
+
+   while True:
+      points = [np.clip(p, 0.001, 0.998) for p in points]
+      points_with_f = sorted(
+         [(p, neg_func(p[0], p[1])) for p in points],
+         key=lambda pair: pair[1]
+      )
+      func_comp_count += 3
+
+      (x_l, f_l), (x_g, f_g), (x_h, f_h) = points_with_f
+      points = [x_l, x_g, x_h]
+      points = np.clip(points, 0.001, 0.998)
+
+      func_values = np.array([f_l, f_g, f_h])
+
+      test_points.append([x_l.copy(), x_g.copy(), x_h.copy()])
+
+      spread = np.sqrt(np.sum((func_values - f_l)**2) / n)
+      if spread < tolerance:
+         break
+
+      x_c = (x_l + x_g) / 2
+      theta = 1
+      x_naujas = x_h + (1 + theta) * (x_c - x_h)
+      f_naujas = neg_func(x_naujas[0], x_naujas[1])
+      func_comp_count += 1
+
+      if f_naujas < f_l:
+         theta = gamma
+      elif f_naujas > f_h:
+         theta = nu 
+      elif f_g < f_naujas < f_h:
+         theta = beta
+      # elif f_l < f_naujas < f_g:
+      #    theta = 1
+
+      z = x_h + (1 + theta) * (x_c - x_h)
+      
+      points = [x_l, x_g, z]
+      cycle_count += 1
+      
+   return x_l, neg_func(points[0][0], points[0][1]), cycle_count, func_comp_count, test_points
 
 def plot_result(x_res, test_points, method_name, x_name):
    x_1_values = np.linspace(0.001, 1, 300)
@@ -120,11 +184,19 @@ def plot_result(x_res, test_points, method_name, x_name):
    contour = ax.contour(x_1, x_2, z, levels=50, cmap='viridis')
    fig.colorbar(contour, ax=ax, label='f(x1, x2)')
 
-   points = np.array(test_points)
-   ax.plot(points[:, 0], points[:, 1], '.', color='black',  markersize=4, label='Bandymo taškai')
+   if method_name == 'Deformuojamas Simpleksas':
+      n_triangles = len(test_points)
+      for i, triangle in enumerate(test_points):
+         opacity = 0.1 + 0.9 * (i / n_triangles)
+         polygon = plt.Polygon(triangle, fill=False, edgecolor='orange', alpha=opacity, linewidth=0.8)
+         ax.add_patch(polygon)
+      first = np.array(test_points[0])
+      ax.plot(first[:, 0], first[:, 1], 'ro', linewidth=2, label='Pradinis taškas')
+   else:
+      points = np.array(test_points)
+      ax.plot(points[:, 0], points[:, 1], '.', color='black',  markersize=4, label='Bandymo taškai')
+      ax.plot(points[0, 0], points[0, 1], 'o', color='red', markersize=6, label='Pradinis taškas')
 
-   ax.plot(points[0, 0], points[0, 1], 'o', color='red', markersize=6, label='Pradinis taškas')
-   # ax.plot(points[-1, 0], points[-1, 1], '*', color='green', markersize=10, label='Minimumas') # Maybe use x_res here?
    ax.plot(x_res[0], x_res[1], '*', color='green', markersize=10, label='Minimumas') 
 
 
@@ -136,22 +208,23 @@ def plot_result(x_res, test_points, method_name, x_name):
    method_name_replaced = method_name.replace(' ', '_')
    filepath = 'Project_2/' + method_name_replaced + '/' + method_name_replaced + '_' + x_name + '.png'
    plt.savefig(filepath, dpi=300, bbox_inches="tight")
-   plt.show()
+   # plt.show()
    plt.close()
 
 def main():
+   tolerance = 0.0001
    rows = []
    for method, method_name in [
       (gradient_descent, 'Gradientinis Nusileidimas'),
       (steepest_descent, 'Greiciausias Nusileidimas'),
-      # (nelder_mead, 'Deformuojamas Simpleksas')
+      (nelder_mead, 'Deformuojamas Simpleksas')
    ]:
       for x, x_name in [
          ((0, 0), 'x_0'),
          ((1, 1), 'x_1'),
          ((3/10, 4/10), 'x_m')
       ]:
-         x_res, z_res, cycle_count, func_comp_count, test_points = method(x)
+         x_res, z_res, cycle_count, func_comp_count, test_points = method(x, tolerance)
          plot_result(x_res, test_points, method_name, x_name)
          rows.append({
             'Method': method_name,
