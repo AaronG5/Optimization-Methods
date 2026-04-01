@@ -19,13 +19,13 @@ import pandas as pd
 # -f(x_1, x_2) = - (x_1 * x_2 * (1 - x_1 - x_2))
 
 def neg_func(x_1, x_2):
-   return  -(x_1 * x_2 * (1 - x_1 - x_2))
+   return  x_1 * x_2 * (x_1 + x_2 - 1)
 
 def partial_deriv_x_1(x_1, x_2):
-   return  -x_2 * (1 - 2 * x_1 - x_2)
+   return  x_2 * (2 * x_1 + x_2 - 1)
 
 def partial_deriv_x_2(x_1, x_2):
-   return  -x_1 * (1 - x_1 - 2 * x_2)
+   return  x_1 * (x_1 + 2 * x_2 - 1)
 
 def grad_neg_func(x_1, x_2):
    return np.array((partial_deriv_x_1(x_1, x_2), partial_deriv_x_2(x_1, x_2)))
@@ -64,7 +64,7 @@ def make_simplex_point(x, offset_1, offset_2):
 
 def gradient_descent(x, tolerance):
    x = np.array(x, dtype=float)
-   step = 0.01
+   step = 0.1
    
    cycle_count = 0
    func_comp_count = 0
@@ -181,7 +181,7 @@ def plot_result(x_res, test_points, method_name, x_name):
 
    fig, ax = plt.subplots()
 
-   contour = ax.contour(x_1, x_2, z, levels=50, cmap='viridis')
+   contour = ax.contour(x_1, x_2, z, levels=100, cmap='viridis')
    fig.colorbar(contour, ax=ax, label='f(x1, x2)')
 
    if method_name == 'Deformuojamas Simpleksas':
@@ -198,7 +198,6 @@ def plot_result(x_res, test_points, method_name, x_name):
       ax.plot(points[0, 0], points[0, 1], 'o', color='red', markersize=6, label='Pradinis taškas')
 
    ax.plot(x_res[0], x_res[1], '*', color='green', markersize=10, label='Minimumas') 
-
 
    ax.set_xlabel('x1')
    ax.set_ylabel('x2')

@@ -1,10 +1,10 @@
- , Method                   , Starting_point, x1_x2                  , Minimum_value, Cycle_count, Func_comp_count
-0, Gradientinis Nusileidimas, x_0           , [0. 0.]                , -0.0         ,           0,               1
-1, Gradientinis Nusileidimas, x_1           , [0.33340345 0.33340345], -0.037037    ,         801,             802
-2, Gradientinis Nusileidimas, x_m           , [0.33312196 0.33354498], -0.037037    ,        1649,            1650
-3, Greiciausias Nusileidimas, x_0           , [0. 0.]                , -0.0         ,           0,               1
-4, Greiciausias Nusileidimas, x_1           , [0.33333022 0.33333022], -0.037037    ,           1,               2
-5, Greiciausias Nusileidimas, x_m           , [0.33320407 0.33338808], -0.037037    ,           9,              10
-6, Deformuojamas Simpleksas , x_0           , [0.32256772 0.34777221], -0.036981    ,           9,              48
-7, Deformuojamas Simpleksas , x_1           , [0.30207484 0.34963298], -0.036785    ,          15,              78
-8, Deformuojamas Simpleksas , x_m           , [0.33984598 0.32521209], -0.037018    ,          12,              63
+,Method,Starting_point,x1_x2,Minimum_value,Cycle_count,Func_comp_count
+0,Gradientinis Nusileidimas,x_0,[0. 0.],-0.0,0,1
+1,Gradientinis Nusileidimas,x_1,[0.33339836 0.33339836],-0.037037,76,77
+2,Gradientinis Nusileidimas,x_m,[0.33312589 0.33354103],-0.037037,163,164
+3,Greiciausias Nusileidimas,x_0,[0. 0.],-0.0,0,1
+4,Greiciausias Nusileidimas,x_1,[0.33333022 0.33333022],-0.037037,1,2
+5,Greiciausias Nusileidimas,x_m,[0.33320407 0.33338808],-0.037037,9,10
+6,Deformuojamas Simpleksas,x_0,[0.32256772 0.34777221],-0.036981,9,39
+7,Deformuojamas Simpleksas,x_1,[0.30207484 0.34963298],-0.036785,15,63
+8,Deformuojamas Simpleksas,x_m,[0.33984598 0.32521209],-0.037018,12,51
