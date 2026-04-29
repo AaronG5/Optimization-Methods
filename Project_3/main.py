@@ -12,7 +12,7 @@ import os
 # h2(x) = -b ≤ 0
 # h3(x) = -c ≤ 0
 
-def f(X: np.ndarray) -> float: # Negative function
+def f(X: np.ndarray) -> float: # Neigiama funkcija
    x1, x2, x3 = X
    return - x1 * x2 * x3
 
@@ -36,10 +36,10 @@ def penalty_f(X: np.ndarray, r: float) -> float:
 
 def penalty_mult_impact(X_values_and_names):
    plt.figure(figsize=(6, 4))
-   plt.title('Baudos funkcijos reikšmės su skirtingais X, kai r -> 0')
+   plt.title('Baudos funkcijos reikšmės su skirtingais X, kai r → 0')
    plt.xlim((0.51, 0))
    plt.xlabel('r')
-   plt.ylim((-1.01, 500))
+   plt.ylim((-10, 500))
    plt.ylabel('P(X, r)')
    r_range = np.linspace(1, 0.0001, 500)
    for X, name in X_values_and_names:
@@ -118,7 +118,7 @@ def nelder_mead(X_start, r, tolerance, max_iter=10000):
 
    return x_l, f_l, cycle_count, func_comp_count
 
-def penalty_method(X_start, r_start=1.0, r_factor=0.1, n_outer=2, tolerance=1e-8):
+def penalty_method(X_start, r_start=1.0, r_factor=0.5, n_outer=6, tolerance=1e-8):
    X = X_start.copy()
    r = r_start
    total_cycles = 0
@@ -133,20 +133,21 @@ def penalty_method(X_start, r_start=1.0, r_factor=0.1, n_outer=2, tolerance=1e-8
    return X, total_cycles, total_evals
 
 def main():
-   X_0 = np.array([0.001, 0.001, 0.001])
-   X_1 = np.array([1.0, 1.0, 1.0])
-   X_m = np.array([9/10, 3/10, 4/10])
+   X0 = np.array([0.0, 0.0, 0.0])
+   X1 = np.array([1.0, 1.0, 1.0])
+   Xm = np.array([9/10, 3/10, 4/10])
    X_ats = np.array([0.41, 0.41, 0.41])
 
-   X_values_and_names = [(X_0, 'X_0'), (X_1, 'X_1'), (X_m, 'X_m')]
+   X_values_and_names = [(X0, 'X0'), (X1, 'X1'), (Xm, 'Xm')]
 
    for X, name in X_values_and_names:
-      print(f'{name}: {X} \
-            \n - f({name})  = {f(X)} \
+      print(f'{name} = {X} \
+            \n - f({name})  = {-f(X):.3f} \
             \n - g({name})  = {g(X)} \
             \n - h1({name}) = {h1(X)} \
             \n - h2({name}) = {h2(X)} \
-            \n - h3({name}) = {h3(X)}\n')
+            \n - h3({name}) = {h3(X)} \
+            \n------------------')
    
    for X, name in X_values_and_names:
       X_opt, cycles, evals = penalty_method(X)
@@ -156,8 +157,8 @@ def main():
             \n - Atlikta žingsnių = {cycles} \
             \n - Funkcijų skaičiavimų skaičius = {evals}\n')
 
-   X_values_and_names.append((X_ats, 'X_ats'))
-   penalty_mult_impact(X_values_and_names)
+   # X_values_and_names.append((X_ats, 'X_ats'))
+   # penalty_mult_impact(X_values_and_names)
 
 if __name__ == "__main__":
    main()
