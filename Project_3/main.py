@@ -12,7 +12,7 @@ import os
 # h2(x) = -b ≤ 0
 # h3(x) = -c ≤ 0
 
-def f(X: np.ndarray) -> float: # Neigiama funkcija
+def f(X: np.ndarray) -> float:
    x1, x2, x3 = X
    return - x1 * x2 * x3
 
