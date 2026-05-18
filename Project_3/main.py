@@ -155,10 +155,11 @@ def main():
             \n - X sprendinys = {X_opt} \
             \n - Minimumo įvertis = {-f(X_opt):.8f} \
             \n - Atlikta žingsnių = {cycles} \
-            \n - Funkcijų skaičiavimų skaičius = {evals}\n')
+            \n - Funkcijų skaičiavimų skaičius = {evals} \
+            \n----------------------------------------------------')
 
-   # X_values_and_names.append((X_ats, 'X_ats'))
-   # penalty_mult_impact(X_values_and_names)
+   X_values_and_names.append((X_ats, 'X_ats'))
+   penalty_mult_impact(X_values_and_names)
 
 if __name__ == "__main__":
    main()
