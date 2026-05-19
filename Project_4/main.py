@@ -13,15 +13,29 @@ import numpy as np
 
 def print_table(table, var_names, base_indices, m, iteration):
    print(f'\nIteracija: {iteration}')
-   print(f'{'baze':<7}' + ''.join([f'{name:<9}' for name in var_names]) + 'B')
-   print('-' * (7 + (len(var_names) + 1) * 9))
+   print(f'{'baze':<7}' + ''.join([f'{name:<8}' for name in var_names]) + 'B')
+   print('-' * (7 + (len(var_names) + 1) * 8))
    for i in range(m):
       base_var_name = var_names[base_indices[i]]
-      table_vars = ''.join([f'{var:<9.3f}' for var in table[i, :]])
+      table_vars = ''.join([f'{var:<8.2f}' for var in table[i, :]])
       print(f'{base_var_name:<7}{table_vars}')
 
-   print(f'{'z':<7}' + ''.join([f'{var:<9.3f}' for var in table[-1, :]]))
-   print('-' * (7 + (len(var_names) + 1) * 9))
+   print(f'{'z':<7}' + ''.join([f'{var:<8.2f}' for var in table[-1, :]]))
+   print('-' * (7 + (len(var_names) + 1) * 8))
+
+def print_results(min_obj_func_val, z_res, base_indices, var_names, n, m):
+   print('\n--- REZULTATAI ---')
+   print(f'Minimali tikslo funkcijos reiksme: {min_obj_func_val:.2f}')
+   print('Kintamuju reiksmes:')
+   for i in range(n - m):
+      print(f' - x{i + 1}: {z_res[i]:.2f}')
+      
+   print('Balansiniai kintamieji:')
+   for i in range(n - m, n):
+      print(f' - s{i - n + m + 1}: {z_res[i]:.2f}')
+
+   print('Baziniai kintamieji sprendime:')
+   print([var_names[i] for i in base_indices])
 
 def create_table(A_matrix, B_vector, C_vector):
    m = len(A_matrix)
@@ -76,10 +90,17 @@ def solve_simplex(A_matrix, B_vector, C_vector, var_names, max_iter=10):
       pivot(table, min_z_index, base_indices)
       print_table(table, var_names, base_indices, m, i)
 
+   z_res = np.zeros(n)
+   j = 0
+   for i in base_indices:
+      z_res[i] = table[j, -1]
+      j += 1
+
+   print_results(-table[-1, -1], z_res, base_indices, var_names, n, m)
+
 def main():
    a, b, c = 8.0, 10.0, 3.0
    # a, b, c = 9.0, 3.0, 4.0 # Studento numeriai
-
 
    var_names = ['x1', 'x2', 'x3', 'x4', 's1', 's2', 's3']
    A = np.array([
