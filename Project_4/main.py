@@ -75,8 +75,6 @@ def pivot(table, pivot_col, base_indices):
 
 def solve_simplex(A_matrix, B_vector, C_vector, var_names, max_iter=10):
    table, m, n, base_indices = create_table(A_matrix, B_vector, C_vector)
-   
-   optimal = False
 
    print_table(table, var_names, base_indices, m, 0)
 
