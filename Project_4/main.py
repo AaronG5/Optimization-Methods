@@ -71,7 +71,6 @@ def pivot(table, pivot_col, base_indices):
             continue
 
          table[i] -= (table[pivot_row] * table[i, pivot_col])    
-      # Maybe return pivot_row?
 
 def solve_simplex(A_matrix, B_vector, C_vector, var_names, max_iter=10):
    table, m, n, base_indices = create_table(A_matrix, B_vector, C_vector)
