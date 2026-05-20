@@ -30,7 +30,7 @@ def print_results(min_obj_func_val, z_res, base_indices, var_names, n, m):
    for i in range(n - m):
       print(f' - x{i + 1}: {z_res[i]:.2f}')
       
-   print('Balansiniai kintamieji:')
+   print('Fiktyvieji kintamieji:')
    for i in range(n - m, n):
       print(f' - s{i - n + m + 1}: {z_res[i]:.2f}')
 
@@ -96,19 +96,24 @@ def solve_simplex(A_matrix, B_vector, C_vector, var_names, max_iter=10):
    print_results(-table[-1, -1], z_res, base_indices, var_names, n, m)
 
 def main():
-   a, b, c = 8.0, 10.0, 3.0
-   # a, b, c = 9.0, 3.0, 4.0 # Studento numeriai
-
    var_names = ['x1', 'x2', 'x3', 'x4', 's1', 's2', 's3']
+
+   a1, b1, c1 = 8.0, 10.0, 3.0
+   a2, b2, c2 = 9.0, 3.0, 4.0 # Studento numeriai
+
    A = np.array([
       [-1.0,  1.0, -1.0, -1.0, 1.0, 0.0, 0.0],
       [ 2.0,  4.0,  0.0,  0.0, 0.0, 1.0, 0.0],
       [ 0.0,  0.0,  1.0,  1.0, 0.0, 0.0, 1.0]
    ])
-   B = np.array([a, b, c])
+   
    C = np.array([2.0, -3.0, 0.0, -5.0, 0.0, 0.0, 0.0])
 
-   solve_simplex(A, B, C, var_names)
+   B1 = np.array([a1, b1, c1])
+   B2 = np.array([a2, b2, c2])
+
+   solve_simplex(A, B1, C, var_names)
+   solve_simplex(A, B2, C, var_names)
 
 if __name__ == '__main__':
    main()
